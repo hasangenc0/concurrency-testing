@@ -1,17 +1,19 @@
 package main
 
 import (
+	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"log"
-
-	"gopkg.in/yaml.v2"
 )
 
-const userTable = "database/user.yaml"
+const (
+	userTable         = "database/user.yaml"
+	readonlyUserTable = "database/readOnlyUsers.yaml"
+)
 
 type User struct {
-	Id int
-	Name string
+	Id       int
+	Name     string
 	Password string
 }
 
@@ -51,9 +53,9 @@ func deleteUser(userId int) {
 	users := getUsers()
 	for i, user := range users {
 		if user.Id == userId {
-			users[i] = users[len(users) - 1]
+			users[i] = users[len(users)-1]
 			users[len(users)-1] = User{}
-			users = users[:len(users) - 1]
+			users = users[:len(users)-1]
 			saveUsers(users)
 			return
 		}
@@ -84,7 +86,12 @@ func getUsers() []User {
 	return users
 }
 
-func main()  {
-	deleteUser(3)
-	//go updateUserPassword(3, "Hasan61")
+func isUserExists(users []User, userId int) bool {
+	for _, user := range users {
+		if user.Id == userId {
+			return true
+		}
+	}
+
+	return false
 }
